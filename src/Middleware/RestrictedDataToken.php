@@ -19,7 +19,10 @@ class RestrictedDataToken implements RequestMiddleware
     public function __invoke(PendingRequest $pendingRequest): void
     {
         $connector = $pendingRequest->getConnector();
-        if (! Endpoint::isSandbox($connector->endpoint)) {
+        if (
+            ! Endpoint::isSandbox($connector->endpoint) || 
+            str_contains($pendingRequest->getUri()->getPath(), 'shippingLabels') 
+        ) {
             $pendingRequest->authenticate($connector->restrictedAuth(
                 $this->path,
                 $this->method,
